@@ -3,6 +3,8 @@ package com.sarinawhite.model
 import org.junit.Test
 import java.math.BigDecimal
 import kotlin.test.assertEquals
+import kotlin.test.assertFalse
+import kotlin.test.assertTrue
 
 class OrderTest {
     @Test
@@ -21,5 +23,12 @@ class OrderTest {
         assertEquals(Item.ORANGE.price.times(BigDecimal(4)), Order(List(5) { Item.ORANGE }).getTotalCost())
         assertEquals(Item.ORANGE.price.times(BigDecimal(4)), Order(List(6) { Item.ORANGE }).getTotalCost())
         assertEquals(Item.ORANGE.price.times(BigDecimal(2)).add(Item.APPLE.price), Order(listOf(List(3) { Item.ORANGE }, List(2) { Item.APPLE }).flatten()).getTotalCost())
+    }
+
+    @Test
+    fun testIsInStock() {
+        assertTrue(Order(List(Item.ORANGE.stock) { Item.ORANGE }).isInStock())
+        assertFalse(Order(List(Item.ORANGE.stock + 1) { Item.ORANGE }).isInStock())
+        assertFalse(Order(listOf(List(Item.ORANGE.stock) { Item.ORANGE }, List(Item.APPLE.stock + 1) { Item.APPLE }).flatten()).isInStock())
     }
 }

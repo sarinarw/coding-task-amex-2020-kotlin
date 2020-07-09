@@ -2,5 +2,6 @@ package com.sarinawhite.model;
 
 public enum OrderStatus {
     SUCCESS,
-    FAILURE
+    FAILURE,
+    OUT_OF_STOCK
 }

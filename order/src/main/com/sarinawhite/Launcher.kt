@@ -18,10 +18,15 @@ fun main(args: Array<String>) = mainBody {
             println("ERROR: Order cannot be processed. Invalid input = ${invalidInputStrings.joinToString(", ")}")
         } else {
             val validItems = orderResult.first
+            val order = Order(validItems)
             println("Total price = \$${Order(validItems).getTotalCost()}")
             val vertx: Vertx = Vertx.vertx()
             println("Attempting to send order status...")
-            MailClient(vertx).sendOrderStatus(OrderStatus.SUCCESS)
+            if (order.isInStock()) {
+                MailClient(vertx).sendOrderStatus(OrderStatus.SUCCESS)
+            } else {
+                MailClient(vertx).sendOrderStatus(OrderStatus.OUT_OF_STOCK)
+            }
         }
     }
 }

@@ -42,6 +42,7 @@ class Server : AbstractVerticle() {
         }
         when(orderStatus) {
             OrderStatus.FAILURE -> println("FAILURE. Reason: Unknown")
+            OrderStatus.OUT_OF_STOCK -> println("FAILURE. Reason: Item(s) out of stock")
             OrderStatus.SUCCESS -> println("SUCCESS. Estimate delivery = ${LocalDate.now().plusDays(5)}");
         }
     }
