@@ -1,24 +1,28 @@
 package com.sarinawhite
 
+import com.sarinawhite.helper.OrderHandler
+import com.sarinawhite.integration.mail.MailClient
+import com.sarinawhite.integration.mail.OrderStatus
+import com.sarinawhite.model.Order
 import com.xenomachina.argparser.ArgParser
 import com.xenomachina.argparser.DefaultHelpFormatter
 import com.xenomachina.argparser.mainBody
-import com.sarinawhite.helper.OrderHandler
-import com.sarinawhite.model.Order
+import io.vertx.core.Vertx
 
 fun main(args: Array<String>) = mainBody {
     ArgParser(args, helpFormatter = DefaultHelpFormatter(DESCRIPTION)).parseInto(::OrderArgs).run {
         println("Received order = $order")
         val orderResult = OrderHandler.handleOrder(order)
         val invalidInputStrings = orderResult.second
-        val outputMessage = if (invalidInputStrings.isNotEmpty()) {
-            "ERROR: Order cannot be processed. Invalid input = ${invalidInputStrings.joinToString(", ")}"
+        if (invalidInputStrings.isNotEmpty()) {
+            println("ERROR: Order cannot be processed. Invalid input = ${invalidInputStrings.joinToString(", ")}")
         } else {
             val validItems = orderResult.first
-            "Total price = \$${Order(validItems).getTotalCost()}"
+            println("Total price = \$${Order(validItems).getTotalCost()}")
+            val vertx: Vertx = Vertx.vertx()
+            println("Attempting to send order status...")
+            MailClient(vertx).sendOrderStatus(OrderStatus.SUCCESS)
         }
-
-        println(outputMessage)
     }
 }
 
